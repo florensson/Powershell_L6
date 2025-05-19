@@ -29,18 +29,27 @@ Den skickas vanligtvis i anropets header eller som parameter i URL:en.
 function Get-Weather {
     param([string]$city)
 
-    $key = "din-api-nyckel"
+    $key = " "
     $url = "http://api.weatherapi.com/v1/current.json?key=$key&q=$city"
 
     $response = Invoke-RestMethod -Uri $url
     return $response.current.temp_c
 }
 
-# Anrop
+# Anropa funktionen
 Get-Weather -city "Stockholm"
 ```
 
 ---
+
+Vi kan också testa i terminalen om vi vill:
+```powershell
+$city = "Stockholm"
+$key = "b296d76c7c3946698de153807251905"
+$url = "http://api.weatherapi.com/v1/current.json?key=$key&q=$city"
+$response = Invoke-RestMethod -Uri $url
+$response.current
+```
 
 ## Exempel 2 – Med header: NewsAPI.org
 
