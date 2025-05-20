@@ -88,29 +88,6 @@ $response.PSObject.Properties.Name
 
 ---
 
-## Strukturera kod i modul
-
-**Get-Weather.psm1**
-
-```powershell
-function Get-Weather {
-    param([string]$city)
-    $key = "din-api-nyckel"
-    $url = "http://api.weatherapi.com/v1/current.json?key=$key&q=$city"
-    $response = Invoke-RestMethod $url
-    return $response.current.temp_c
-}
-```
-
-**run.ps1**
-
-```powershell
-Import-Module ./Get-Weather.psm1
-Get-Weather -city "Göteborg"
-```
-
----
-
 ## Tips vid fel
 
 - Kontrollera att nyckeln är rätt
