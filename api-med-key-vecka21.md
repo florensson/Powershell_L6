@@ -9,6 +9,7 @@ Denna vecka fokuserar vi på att anropa API:er som kräver autentisering via API
 - Skicka headers och hantera parametrar
 - Läsa och tolka JSON-svar i PowerShell
 - Strukturera skriptet i `.ps1` och `.psm1`
+- Använda `.env`-filer för att dölja API-nycklar
 
 ---
 
@@ -19,17 +20,38 @@ Den skickas vanligtvis i anropets header eller som parameter i URL:en.
 
 ---
 
-## Exempel 1 – WeatherAPI.com
+## Exempel 1 – WeatherAPI.com med `.env`
 
-1. Gå till https://www.weatherapi.com/
-2. Skapa ett konto och hämta din gratis API-nyckel
-3. Använd följande kod:
+1. Skapa ett konto på https://www.weatherapi.com/ och hämta din API-nyckel
+2. Skapa en `.env`-fil med detta innehåll (lägg inte citationstecken):
+
+```
+WEATHER_KEY=b296d76c7c3946698de153807251905
+```
+
+3. Lägg till `.env` i `.gitignore`:
+
+```
+.env
+```
+
+4. Använd följande kod:
 
 ```powershell
+# Ladda nycklar från .env
+Get-Content .env | ForEach-Object {
+    if ($_ -match "^(.*?)=(.*)$") {
+        $name, $value = $matches[1], $matches[2]
+        if (-not [System.Environment]::GetEnvironmentVariable($name)) {
+            [System.Environment]::SetEnvironmentVariable($name, $value)
+        }
+    }
+}
+
 function Get-Weather {
     param([string]$city)
 
-    $key = " "
+    $key = [System.Environment]::GetEnvironmentVariable("WEATHER_KEY")
     $url = "http://api.weatherapi.com/v1/current.json?key=$key&q=$city"
 
     $response = Invoke-RestMethod -Uri $url
@@ -41,15 +63,6 @@ Get-Weather -city "Stockholm"
 ```
 
 ---
-
-Vi kan också testa i terminalen om vi vill:
-```powershell
-$city = "Stockholm"
-$key = "b296d76c7c3946698de153807251905"
-$url = "http://api.weatherapi.com/v1/current.json?key=$key&q=$city"
-$response = Invoke-RestMethod -Uri $url
-$response.current
-```
 
 ## Exempel 2 – Med header: NewsAPI.org
 
@@ -70,7 +83,7 @@ function Get-TopNews {
     return $response.articles[0].title
 }
 
-# Anrop
+# Anropa
 Get-TopNews
 ```
 
@@ -101,4 +114,6 @@ $response.PSObject.Properties.Name
 
 - Registrera dig hos ett API
 - Testa ett fungerande anrop i PowerShell
+- Strukturera i `.ps1` och (valfritt) `.psm1`
 - Lägg upp i GitHub-repo
+- Lägg `.env` i `.gitignore`
