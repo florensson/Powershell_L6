@@ -101,5 +101,4 @@ $response.PSObject.Properties.Name
 
 - Registrera dig hos ett API
 - Testa ett fungerande anrop i PowerShell
-- Strukturera i modul + ps1
 - Lägg upp i GitHub-repo
